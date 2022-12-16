@@ -45,8 +45,9 @@ func main() {
 	controller := controller.NewController(service)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/generateTinyUrl/", controller.GenerateTinyUrl).Methods("POST")
-
+	router.HandleFunc("/generateTinyUrl/", controller.GenrateTinyUrl).Methods("POST")
+	router.HandleFunc("/{hashCode}", controller.RedirectTinyUrl).Methods("GET")
+	router.HandleFunc("/home/", controller.HomePage).Methods("GET")
 	log.Println("Application Started")
 	srv := &http.Server{
 		Handler: router,
