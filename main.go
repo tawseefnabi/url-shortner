@@ -9,6 +9,9 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	controller "url-shortner/Controller"
+	repository "url-shortner/Repository"
+	service "url-shortner/Service"
 
 	"github.com/gorilla/mux"
 	"gorm.io/driver/sqlite"
@@ -37,9 +40,12 @@ func main() {
 	var wait time.Duration
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
+	repository := repository.NewRepository(db)
+	service := service.NewService(repository)
+	controller := controller.NewController(service)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/generateTinyUrl/", nil).Methods("POST")
+	router.HandleFunc("/generateTinyUrl/", controller.GenerateTinyUrl).Methods("POST")
 
 	log.Println("Application Started")
 	srv := &http.Server{
